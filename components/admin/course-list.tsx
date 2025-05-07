@@ -42,7 +42,18 @@ const handleUpdate = (course: Course, formData: FormData) => {
     return;
   }
   
-  onUpdate(course._id, formData);
+  // Make sure we pass the course ID in the FormData
+  const updatedFormData = new FormData();
+  updatedFormData.append('id', course._id);
+  
+  // Copy all other values
+  for (const [key, value] of formData.entries()) {
+    if (key !== 'id') { // Avoid duplicate id entries
+      updatedFormData.append(key, value);
+    }
+  }
+  
+  onUpdate(course._id, updatedFormData);
 };
 
   return (
