@@ -81,6 +81,8 @@ export async function POST(req: NextRequest) {
 }
 
 // PUT: Update existing course
+// Inside the route.ts file, update the PUT function:
+
 export async function PUT(req: NextRequest) {
   try {
     const formData = await req.formData();
