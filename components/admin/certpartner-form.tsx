@@ -39,7 +39,7 @@ export default function CertPartnerForm({ certPartner, onSubmit }: CertPartnerFo
       </div>
 
       <div className="space-y-2">
-        <Label html For="logo">Partner Logo</Label>
+        <Label htmlFor="logo">Partner Logo</Label>
         {certPartner?.logo && (
           <div className="relative w-full h-32 mb-4 rounded-lg overflow-hidden">
             <Image
