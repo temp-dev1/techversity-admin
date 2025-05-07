@@ -41,7 +41,7 @@ const handleUpdate = (course: Course, formData: FormData) => {
     console.error('Course ID is missing');
     return;
   }
-  formData.set('id', course._id); // This is the key expected by the API route
+  
   onUpdate(course._id, formData);
 };
 
