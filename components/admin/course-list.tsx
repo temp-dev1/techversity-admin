@@ -41,7 +41,7 @@ export default function CourseList({ courses, onDelete, onUpdate }: CourseListPr
       console.error('Course ID is missing');
       return;
     }
-    formData.set('id', course._id);
+    formData.set('_id', course._id);
     onUpdate(course._id, formData);
   };
 
