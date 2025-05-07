@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -28,6 +29,7 @@ export default function TestimonialForm({ testimonial, onSubmit }: TestimonialFo
   };
 
   return (
+    <ScrollArea className="h-[80vh] pr-4">
     <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto p-6">
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
@@ -111,5 +113,6 @@ export default function TestimonialForm({ testimonial, onSubmit }: TestimonialFo
         )}
       </Button>
     </form>
+      </ScrollArea>
   );
 }
