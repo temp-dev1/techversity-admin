@@ -96,38 +96,39 @@ export default function CoursesPage() {
     }
   };
 
-  const handleUpdate = async (id: string, formData: FormData) => {
-    try {
-      formData.append('id', id);
-      const response = await fetch('/api/admin/courses', {
-        method: 'PUT',
-        body: formData,
-      });
+  // Inside the page.tsx file
 
-      const data = await response.json();
+const handleUpdate = async (id: string, formData: FormData) => {
+  try {
+    // No need to append id here since it's already in the formData from CourseForm
+    const response = await fetch('/api/admin/courses', {
+      method: 'PUT',
+      body: formData,
+    });
 
-      if (data.success) {
-        setCourses(courses.map(c => 
-          c._id === id ? data.course : c
-        ));
-        toast({
-          title: "Success",
-          description: "Course updated successfully",
-          variant: "default",
-        });
-      } else {
-        throw new Error(data.message || 'Failed to update course');
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to update course';
+    const data = await response.json();
+
+    if (data.success) {
+      setCourses(courses.map(c => 
+        c._id === id ? data.course : c
+      ));
       toast({
-        title: "Error",
-        description: message,
-        variant: "destructive",
+        title: "Success",
+        description: "Course updated successfully",
+        variant: "default",
       });
+    } else {
+      throw new Error(data.message || 'Failed to update course');
     }
-  };
-
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to update course';
+    toast({
+      title: "Error",
+      description: message,
+      variant: "destructive",
+    });
+  }
+};
   const handleDelete = async (id: string) => {
     try {
       const response = await fetch(`/api/admin/delete`, {
