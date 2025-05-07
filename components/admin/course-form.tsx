@@ -132,11 +132,18 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
     setProgramFees(newProgramFees);
   };
 
-  const updateProgramFeature = (programIndex: number, featureIndex: number, field: string, value: any) => {
-    const newProgramFees = [...programFees];
-    newProgramFees[programIndex].features[featureIndex][field] = value;
-    setProgramFees(newProgramFees);
-  };
+ type FeatureField = 'name' | 'included';
+
+const updateProgramFeature = (
+  programIndex: number,
+  featureIndex: number,
+  field: FeatureField,
+  value: string | boolean
+) => {
+  const newProgramFees = [...programFees];
+  newProgramFees[programIndex].features[featureIndex][field] = value;
+  setProgramFees(newProgramFees);
+};
 
   const renderFileInput = (label: string, currentImage?: string) => (
     <div className="space-y-2">
