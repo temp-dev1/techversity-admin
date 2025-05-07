@@ -126,10 +126,8 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
         programFees
       };
 
-      if (course?._id) {
-        formData.append('id', course._id);  // Append the course _id for the update operation
-      } else {
-        throw new Error("Course ID is required for updating.");
+if (course && course._id) {
+        formData.append('id', course._id);
       }
      
       formData.append('data', JSON.stringify(courseData));
