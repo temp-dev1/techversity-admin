@@ -35,9 +35,18 @@ export default function QueriesPage() {
     }
   }, [router]);
 
-  useEffect(() => {
-    fetchQueries();
-  }, []);
+useEffect(() => {
+  fetchQueries(); // Initial fetch when component mounts
+
+  const interval = setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      fetchQueries(); // Poll every 10 seconds if tab is active
+    }
+  }, 10000); // 10000 ms = 10 seconds
+
+  return () => clearInterval(interval); // Cleanup when unmounting
+}, []);
+
 
   const fetchQueries = async () => {
     try {
