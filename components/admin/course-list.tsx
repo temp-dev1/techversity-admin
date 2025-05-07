@@ -47,7 +47,7 @@ const handleUpdate = (course: Course, formData: FormData) => {
   updatedFormData.append('id', course._id);
   
   // Copy all other values
-  for (const [key, value] of formData.entries()) {
+  for (const [key, value] of Array.from(formData.entries())) {
     if (key !== 'id') { // Avoid duplicate id entries
       updatedFormData.append(key, value);
     }
