@@ -6,31 +6,19 @@ if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable in .env.local');
 }
 
-// @ts-ignore: Ignore TS until we declare it properly in global.d.ts
-let cached = global.mongoose;
+// Track connection state in module scope
+let isConnected = false;
 
-if (!cached) {
-  // @ts-ignore
-  cached = global.mongoose = { conn: null, promise: null };
-}
+export default async function connectDB() {
+  if (isConnected) return;
 
-async function connectDB() {
-  if (cached.conn) {
-    return cached.conn;
+  try {
+    const db = await mongoose.connect(MONGODB_URI);
+    isConnected = true;
+    console.log('MongoDB connected');
+    return db;
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    throw error;
   }
-
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
-      console.log('MongoDB connected successfully');
-      return mongoose;
-    }).catch((err) => {
-      console.error('MongoDB connection error:', err);
-      throw err;
-    });
-  }
-
-  cached.conn = await cached.promise;
-  return cached.conn;
 }
-
-export default connectDB;
