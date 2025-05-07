@@ -9,18 +9,21 @@ import CertPartnerModel from '@/lib/models/certpartner';
 import CourseModel from '@/lib/models/course';
 
 export async function DELETE(req: NextRequest) {
+  let parsedBody: { id?: string; type?: string } = {};
+
   try {
-    const { id, type } = await req.json();
-    
+    parsedBody = await req.json();
+    const { id, type } = parsedBody;
+
     if (!id || !type) {
       return NextResponse.json(
         { success: false, message: 'Missing required fields' },
         { status: 400 }
       );
     }
-    
+
     await connectToDatabase();
-    
+
     let result;
     switch (type) {
       case 'query':
@@ -50,17 +53,18 @@ export async function DELETE(req: NextRequest) {
           { status: 400 }
         );
     }
-    
+
     if (!result) {
       return NextResponse.json(
         { success: false, message: `${type} not found` },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json({ success: true });
+
   } catch (error) {
-    console.error(`Failed to delete ${req.body?.type}:`, error);
+    console.error(`Failed to delete ${parsedBody.type || 'unknown'}:`, error);
     return NextResponse.json(
       { success: false, message: 'Failed to delete item' },
       { status: 500 }
