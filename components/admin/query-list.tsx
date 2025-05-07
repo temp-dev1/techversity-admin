@@ -1,39 +1,46 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Query } from '@/lib/types';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
+import {
+  Card, CardContent, CardFooter, CardHeader, CardTitle,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-  AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+  AlertDialogTrigger, Button, Badge, Input
+} from '@/components/ui';
 import { Trash2Icon, MailIcon, PhoneIcon, MessageSquareIcon, CalendarIcon } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 
 interface QueryListProps {
-  queries: Query[];
   onDelete: (id: string) => void;
 }
 
-export default function QueryList({ queries, onDelete }: QueryListProps) {
+export default function QueryList({ onDelete }: QueryListProps) {
+  const [queries, setQueries] = useState<Query[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  
-  const filteredQueries = queries.filter(query => 
+
+  const fetchQueries = async () => {
+    try {
+      const res = await fetch('/api/queries');
+      const data = await res.json();
+      setQueries(data);
+    } catch (err) {
+      console.error('Failed to fetch queries:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchQueries(); // initial fetch
+    const interval = setInterval(fetchQueries, 5000); // every 5s
+    return () => clearInterval(interval); // cleanup
+  }, []);
+
+  const filteredQueries = queries.filter(query =>
     query.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     query.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     query.phone.includes(searchTerm) ||
     query.message.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  if (queries.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-lg text-muted-foreground">No queries found</p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -68,7 +75,7 @@ export default function QueryList({ queries, onDelete }: QueryListProps) {
                   </div>
                 </div>
               </CardHeader>
-              
+
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 gap-3">
                   <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-md">
@@ -77,7 +84,6 @@ export default function QueryList({ queries, onDelete }: QueryListProps) {
                       {query.email}
                     </a>
                   </div>
-                  
                   <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-md">
                     <PhoneIcon className="h-4 w-4 text-primary" />
                     <a href={`tel:${query.phone}`} className="text-sm hover:underline">
@@ -85,7 +91,7 @@ export default function QueryList({ queries, onDelete }: QueryListProps) {
                     </a>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <MessageSquareIcon className="h-4 w-4 text-primary" />
@@ -96,7 +102,7 @@ export default function QueryList({ queries, onDelete }: QueryListProps) {
                   </p>
                 </div>
               </CardContent>
-              
+
               <CardFooter className="border-t bg-muted/50 p-4">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -109,8 +115,7 @@ export default function QueryList({ queries, onDelete }: QueryListProps) {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Query</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete this query from {query.name}? 
-                        This action cannot be undone.
+                        Are you sure you want to delete this query from {query.name}? This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
