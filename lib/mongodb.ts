@@ -12,7 +12,7 @@ export default async function connectDB() {
   if (isConnected) return;
 
   try {
-    const db = await mongoose.connect(uri); // `uri` is now definitely a string
+    const db = await mongoose.connect(uri as string); // `uri` is now definitely a string
     isConnected = true;
     console.log('MongoDB connected');
     return db;
