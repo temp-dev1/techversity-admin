@@ -27,6 +27,7 @@ export default function CertPartnerForm({ certPartner, onSubmit }: CertPartnerFo
   };
 
   return (
+    <ScrollArea className="h-[80vh] pr-4">
     <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto p-6">
       <div className="space-y-2">
         <Label htmlFor="name">Partner Name</Label>
@@ -70,5 +71,6 @@ export default function CertPartnerForm({ certPartner, onSubmit }: CertPartnerFo
         )}
       </Button>
     </form>
+      </ScrollArea>
   );
 }
