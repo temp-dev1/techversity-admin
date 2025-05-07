@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
 
 interface PartnerFormProps {
@@ -27,6 +28,7 @@ export default function PartnerForm({ partner, onSubmit }: PartnerFormProps) {
   };
 
   return (
+    <ScrollArea className="h-[80vh] pr-4">
     <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto p-6">
       <div className="space-y-2">
         <Label htmlFor="name">Partner Name</Label>
@@ -70,5 +72,6 @@ export default function PartnerForm({ partner, onSubmit }: PartnerFormProps) {
         )}
       </Button>
     </form>
+      </ScrollArea>
   );
 }
