@@ -27,6 +27,7 @@ export default function ExpertForm({ expert, onSubmit }: ExpertFormProps) {
   };
 
   return (
+    <ScrollArea className="h-[80vh] pr-4">
     <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto p-6">
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
@@ -132,5 +133,6 @@ export default function ExpertForm({ expert, onSubmit }: ExpertFormProps) {
         )}
       </Button>
     </form>
+    </ScrollArea>
   );
 }
