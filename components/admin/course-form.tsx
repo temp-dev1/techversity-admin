@@ -493,7 +493,7 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
                   />
                   
                   <div className="space-y-2">
-                    {mentor.image && (
+                    {'image' in mentor && mentor.image && (
                       <div className="relative w-full aspect-square mb-4 rounded-lg overflow-hidden">
                         <Image
                           src={mentor.image}
@@ -529,7 +529,7 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
                   />
 
                   <div className="space-y-2">
-                    {mentor.companyLogo && (
+                    {'companyLogo' in mentor && mentor.companyLogo &&  (
                       <div className="relative w-full h-12 mb-4 rounded-lg overflow-hidden">
                         <Image
                           src={mentor.companyLogo}
