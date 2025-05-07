@@ -1,19 +1,18 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
+if (!uri) {
   throw new Error('Please define the MONGODB_URI environment variable in .env.local');
 }
 
-// Track connection state in module scope
 let isConnected = false;
 
 export default async function connectDB() {
   if (isConnected) return;
 
   try {
-    const db = await mongoose.connect(MONGODB_URI);
+    const db = await mongoose.connect(uri); // `uri` is now definitely a string
     isConnected = true;
     console.log('MongoDB connected');
     return db;
