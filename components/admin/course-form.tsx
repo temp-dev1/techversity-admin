@@ -37,6 +37,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
     
     // Validate required fields
+    const id = formData.get('id') as string;
+
     const title = formData.get('title') as string;
     const image = formData.get('image') as File;
     const rating = formData.get('rating') as string;
@@ -203,6 +205,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   return (
     <ScrollArea className="h-[80vh] pr-4">
       <form onSubmit={handleSubmit} className="space-y-6">
+        {course?._id && <input type="hidden" name="id" value={course._id} />}
+
         <div className="space-y-4 max-w-2xl mx-auto">
           <div>
             <Label htmlFor="title">Course Title *</Label>
