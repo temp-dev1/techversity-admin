@@ -36,14 +36,14 @@ export default function CourseList({ courses, onDelete, onUpdate }: CourseListPr
     );
   }
 
-  const handleUpdate = (course: Course, formData: FormData) => {
-    if (!course._id) {
-      console.error('Course ID is missing');
-      return;
-    }
-    formData.set('_id', course._id);
-    onUpdate(course._id, formData);
-  };
+const handleUpdate = (course: Course, formData: FormData) => {
+  if (!course._id) {
+    console.error('Course ID is missing');
+    return;
+  }
+  formData.set('id', course._id); // This is the key expected by the API route
+  onUpdate(course._id, formData);
+};
 
   return (
     <div className="space-y-6">
