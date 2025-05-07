@@ -27,124 +27,126 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
   const [programFees, setProgramFees] = useState(course?.programFees || [{ type: '', price: 0, features: [{ name: '', included: true }] }]);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
+  // Inside course-form.tsx, update the handleSubmit function
 
-    try {
-      const formData = new FormData(e.currentTarget);
-      
-      // Validate required fields
-      const title = formData.get('title') as string;
-      const image = formData.get('image') as File;
-      const rating = formData.get('rating') as string;
-      const reviews = formData.get('reviews') as string;
-      const duration = formData.get('duration') as string;
-      const level = formData.get('level') as string;
-      const price = formData.get('price') as string;
-      const discountedPrice = formData.get('discountedPrice') as string;
-      const nextBatch = formData.get('nextBatch') as string;
-      const category = formData.get('category') as string;
-      const description = formData.get('description') as string;
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-      // Basic validation
-      if (!title || !duration || !level || !category || !description) {
-        throw new Error('Please fill in all required fields');
-      }
+  try {
+    const formData = new FormData(e.currentTarget);
+    
+    // Validate required fields
+    const title = formData.get('title') as string;
+    const image = formData.get('image') as File;
+    const rating = formData.get('rating') as string;
+    const reviews = formData.get('reviews') as string;
+    const duration = formData.get('duration') as string;
+    const level = formData.get('level') as string;
+    const price = formData.get('price') as string;
+    const discountedPrice = formData.get('discountedPrice') as string;
+    const nextBatch = formData.get('nextBatch') as string;
+    const category = formData.get('category') as string;
+    const description = formData.get('description') as string;
 
-      if (!course && !image?.size) {
-        throw new Error('Please select a course image');
-      }
-
-      if (isNaN(Number(rating)) || Number(rating) < 0 || Number(rating) > 5) {
-        throw new Error('Rating must be between 0 and 5');
-      }
-
-      if (isNaN(Number(reviews)) || Number(reviews) < 0) {
-        throw new Error('Number of reviews must be a positive number');
-      }
-
-      if (isNaN(Number(price)) || Number(price) < 0) {
-        throw new Error('Price must be a positive number');
-      }
-
-      if (isNaN(Number(discountedPrice)) || Number(discountedPrice) < 0) {
-        throw new Error('Discounted price must be a positive number');
-      }
-
-      if (Number(discountedPrice) > Number(price)) {
-        throw new Error('Discounted price cannot be higher than regular price');
-      }
-
-      // Validate arrays
-      if (features.length === 0) {
-        throw new Error('Please add at least one feature');
-      }
-
-      if (learningOutcomes.length === 0) {
-        throw new Error('Please add at least one learning outcome');
-      }
-
-      if (mentors.length === 0) {
-        throw new Error('Please add at least one mentor');
-      }
-
-      // Validate mentors
-      for (const mentor of mentors) {
-        if (!mentor.name || !mentor.role || !mentor.company || !mentor.description) {
-          throw new Error('Please fill in all mentor details');
-        }
-      }
-
-      // Validate program fees
-      for (const program of programFees) {
-        if (!program.type || program.price <= 0) {
-          throw new Error('Please fill in all program fee details');
-        }
-        if (program.features.length === 0) {
-          throw new Error('Each program fee must have at least one feature');
-        }
-      }
-
-      // Add array data to formData
-      const courseData = {
-        title,
-        rating: Number(rating),
-        reviews: Number(reviews),
-        duration,
-        level,
-        price: Number(price),
-        discountedPrice: Number(discountedPrice),
-        nextBatch,
-        category,
-        description,
-        features,
-        learningOutcomes,
-        careerOpportunities,
-        targetAudience,
-        mentors,
-        programFees
-      };
-
-if (course && course._id) {
-        formData.append('id', course._id);
-      }
-     
-      formData.append('data', JSON.stringify(courseData));
-      await onSubmit(formData);
-      
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to submit course';
-      toast({
-        title: "Error",
-        description: message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+    // Basic validation
+    if (!title || !duration || !level || !category || !description) {
+      throw new Error('Please fill in all required fields');
     }
-  };
 
+    if (!course && !image?.size) {
+      throw new Error('Please select a course image');
+    }
+
+    if (isNaN(Number(rating)) || Number(rating) < 0 || Number(rating) > 5) {
+      throw new Error('Rating must be between 0 and 5');
+    }
+
+    if (isNaN(Number(reviews)) || Number(reviews) < 0) {
+      throw new Error('Number of reviews must be a positive number');
+    }
+
+    if (isNaN(Number(price)) || Number(price) < 0) {
+      throw new Error('Price must be a positive number');
+    }
+
+    if (isNaN(Number(discountedPrice)) || Number(discountedPrice) < 0) {
+      throw new Error('Discounted price must be a positive number');
+    }
+
+    if (Number(discountedPrice) > Number(price)) {
+      throw new Error('Discounted price cannot be higher than regular price');
+    }
+
+    // Validate arrays
+    if (features.length === 0) {
+      throw new Error('Please add at least one feature');
+    }
+
+    if (learningOutcomes.length === 0) {
+      throw new Error('Please add at least one learning outcome');
+    }
+
+    if (mentors.length === 0) {
+      throw new Error('Please add at least one mentor');
+    }
+
+    // Validate mentors
+    for (const mentor of mentors) {
+      if (!mentor.name || !mentor.role || !mentor.company || !mentor.description) {
+        throw new Error('Please fill in all mentor details');
+      }
+    }
+
+    // Validate program fees
+    for (const program of programFees) {
+      if (!program.type || program.price <= 0) {
+        throw new Error('Please fill in all program fee details');
+      }
+      if (program.features.length === 0) {
+        throw new Error('Each program fee must have at least one feature');
+      }
+    }
+
+    // Add array data to formData
+    const courseData = {
+      title,
+      rating: Number(rating),
+      reviews: Number(reviews),
+      duration,
+      level,
+      price: Number(price),
+      discountedPrice: Number(discountedPrice),
+      nextBatch,
+      category,
+      description,
+      features,
+      learningOutcomes,
+      careerOpportunities,
+      targetAudience,
+      mentors,
+      programFees
+    };
+
+    // Append course ID if we're updating an existing course
+    if (course?._id) {
+      formData.append('id', course._id);
+    }
+     
+    formData.append('data', JSON.stringify(courseData));
+    await onSubmit(formData);
+    
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to submit course';
+    toast({
+      title: "Error",
+      description: message,
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
   const handleArrayInput = (
     setter: React.Dispatch<React.SetStateAction<string[]>>,
     array: string[],
