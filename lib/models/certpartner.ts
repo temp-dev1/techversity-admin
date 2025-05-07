@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const CertPartnerSchema = new mongoose.Schema({
-  _id: String,
+
   name: String,
   logo: String,
 });
