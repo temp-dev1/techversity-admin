@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const id = formData.get('_id') as string;
+    const id = formData.get('id') as string;
     const image = formData.get('image') as File;
     const data = JSON.parse(formData.get('data') as string);
 
