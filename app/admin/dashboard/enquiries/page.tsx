@@ -36,8 +36,17 @@ export default function EnquiriesPage() {
   }, [router]);
 
   useEffect(() => {
-    fetchEnquiries();
-  }, []);
+      fetchEnquiries(); // Initial fetch when component mounts
+
+  const interval = setInterval(() => {
+    if (document.visibilityState === 'visible') {
+          fetchEnquiries(); // Poll every 10 seconds if tab is active
+    }
+  }, 10000); // 10000 ms = 10 seconds
+
+  return () => clearInterval(interval); // Cleanup when unmounting
+}, []);
+
 
   const fetchEnquiries = async () => {
     try {
