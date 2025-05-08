@@ -78,7 +78,24 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
         programFees
       };
 
-      formData.append('data', JSON.stringify(courseData));
+      formData.append('title', courseData.title as string);
+formData.append('category', courseData.category as string);
+formData.append('rating', String(courseData.rating));
+formData.append('reviews', String(courseData.reviews));
+formData.append('duration', courseData.duration as string);
+formData.append('level', courseData.level as string);
+formData.append('price', String(courseData.price));
+formData.append('discountedPrice', String(courseData.discountedPrice));
+formData.append('nextBatch', courseData.nextBatch as string);
+formData.append('description', courseData.description as string);
+
+formData.append('features', JSON.stringify(courseData.features));
+formData.append('learningOutcomes', JSON.stringify(courseData.learningOutcomes));
+formData.append('careerOpportunities', JSON.stringify(courseData.careerOpportunities));
+formData.append('targetAudience', JSON.stringify(courseData.targetAudience));
+formData.append('mentors', JSON.stringify(courseData.mentors));
+formData.append('programFees', JSON.stringify(courseData.programFees));
+
       await onSubmit(formData);
       
     } catch (error) {
