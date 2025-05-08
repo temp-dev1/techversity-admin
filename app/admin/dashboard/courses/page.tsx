@@ -14,6 +14,7 @@ export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);  // Ensure courses is initialized as an empty array
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -81,7 +82,7 @@ export default function CoursesPage() {
           title: "Success",
           description: "Course created successfully",
           variant: "default",
-        });
+        }); setIsDialogOpen(false);
       } else {
         throw new Error(data.message || 'Failed to create course');
       }
@@ -116,6 +117,7 @@ export default function CoursesPage() {
           description: "Course updated successfully",
           variant: "default",
         });
+        setIsDialogOpen(false);
       } else {
         throw new Error(data.message || 'Failed to update course');
       }
