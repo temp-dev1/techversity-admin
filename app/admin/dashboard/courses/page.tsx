@@ -51,7 +51,7 @@ export default function CoursesPage() {
       if (Array.isArray(data)) {
         const transformed = data.map(course => ({
           ...course,
-          id: course._id,
+          id: string(course._id),
         }));
         setCourses(transformed);
       } else if (data.success === false) {
@@ -82,7 +82,7 @@ export default function CoursesPage() {
       if (data.success) {
         const newCourse = {
           ...data.course,
-          id: data.course._id,
+          id: string(data.course._id),
         };
         setCourses([...courses, newCourse]);
         toast({
@@ -116,7 +116,7 @@ export default function CoursesPage() {
       if (data.success) {
         const updatedCourse = {
           ...data.course,
-          id: data.course._id,
+          id: string(data.course._id),
         };
         setCourses(courses.map(c => (c.id === id ? updatedCourse : c)));
         toast({
