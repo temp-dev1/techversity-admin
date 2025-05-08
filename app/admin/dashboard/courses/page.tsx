@@ -49,11 +49,7 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (Array.isArray(data)) {
-        const transformed = data.map(course => ({
-          ...course,
-          id: course._id,
-        }));
-        setCourses(transformed);
+        setCourses(data); // Assumes each course already has `id: number`
       } else if (data.success === false) {
         throw new Error(data.message || 'Failed to fetch courses');
       }
@@ -80,11 +76,7 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (data.success) {
-        const newCourse = {
-          ...data.course,
-          id: data.course._id,
-        };
-        setCourses([...courses, newCourse]);
+        setCourses([...courses, data.course]); // course must include `id: number`
         toast({
           title: "Success",
           description: "Course created successfully",
@@ -103,9 +95,10 @@ export default function CoursesPage() {
     }
   };
 
-  const handleUpdate = async (id: string, formData: FormData) => {
+  const handleUpdate = async (id: number, formData: FormData) => {
     try {
-      formData.append('id', id);
+      formData.append('id', id.toString());
+
       const response = await fetch('/api/admin/courses', {
         method: 'PUT',
         body: formData,
@@ -114,10 +107,7 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (data.success) {
-        const updatedCourse = {
-          ...data.course,
-          id: data.course._id,
-        };
+        const updatedCourse = data.course;
         setCourses(courses.map(c => (c.id === id ? updatedCourse : c)));
         toast({
           title: "Success",
@@ -137,7 +127,7 @@ export default function CoursesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     try {
       const response = await fetch(`/api/admin/delete`, {
         method: 'DELETE',
