@@ -11,17 +11,16 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2Icon, PencilIcon, StarIcon, ClockIcon, BookIcon, UsersIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
-import CourseForm from './course-form';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { useRouter } from 'next/navigation';
 
 interface CourseListProps {
   courses: Course[];
   onDelete: (id: string) => void;
-  onUpdate: (id: string, data: FormData) => void;
 }
 
-export default function CourseList({ courses, onDelete, onUpdate }: CourseListProps) {
+export default function CourseList({ courses, onDelete }: CourseListProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
   
   const filteredCourses = courses.filter(course => 
     course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -35,26 +34,6 @@ export default function CourseList({ courses, onDelete, onUpdate }: CourseListPr
       </div>
     );
   }
-
-const handleUpdate = (course: Course, formData: FormData) => {
-  if (!course._id) {
-    console.error('Course ID is missing');
-    return;
-  }
-  
-  // Make sure we pass the course ID in the FormData
-  const updatedFormData = new FormData();
-  updatedFormData.append('id', course._id);
-  
-  // Copy all other values
-  for (const [key, value] of Array.from(formData.entries())) {
-    if (key !== 'id') { // Avoid duplicate id entries
-      updatedFormData.append(key, value);
-    }
-  }
-  
-  onUpdate(course._id, updatedFormData);
-};
 
   return (
     <div className="space-y-6">
@@ -128,20 +107,14 @@ const handleUpdate = (course: Course, formData: FormData) => {
               </CardContent>
               
               <CardFooter className="border-t bg-muted/50 p-4 flex justify-between">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <PencilIcon className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl">
-                    <CourseForm
-                      course={course}
-                      onSubmit={(formData) => handleUpdate(course, formData)}
-                    />
-                  </DialogContent>
-                </Dialog>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => router.push(`/admin/dashboard/courses/${course._id}`)}
+                >
+                  <PencilIcon className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
 
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
