@@ -36,6 +36,12 @@ interface Mentor {
   description: string;
 }
 
+interface ImagePreviews {
+  courseImage?: string;
+  mentorImages: { [key: number]: string };
+  mentorLogos: { [key: number]: string };
+}
+
 export default function CourseForm({ course, onSubmit }: CourseFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [features, setFeatures] = useState<string[]>(course?.features || []);
@@ -44,7 +50,34 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
   const [targetAudience, setTargetAudience] = useState<string[]>(course?.targetAudience || []);
   const [mentors, setMentors] = useState<Mentor[]>(course?.mentors || [{ name: '', role: '', company: '', description: '' }]);
   const [programFees, setProgramFees] = useState<ProgramFee[]>(course?.programFees || [{ type: '', price: 0, features: [{ name: '', included: true }] }]);
+  const [imagePreviews, setImagePreviews] = useState<ImagePreviews>({
+    courseImage: course?.image,
+    mentorImages: course?.mentors?.reduce((acc, mentor, index) => ({ ...acc, [index]: mentor.image }), {}) || {},
+    mentorLogos: course?.mentors?.reduce((acc, mentor, index) => ({ ...acc, [index]: mentor.companyLogo }), {}) || {}
+  });
   const { toast } = useToast();
+
+  const handleImageChange = (file: File | null, type: 'courseImage' | 'mentorImage' | 'mentorLogo', index?: number) => {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (type === 'courseImage') {
+        setImagePreviews(prev => ({ ...prev, courseImage: reader.result as string }));
+      } else if (type === 'mentorImage' && index !== undefined) {
+        setImagePreviews(prev => ({
+          ...prev,
+          mentorImages: { ...prev.mentorImages, [index]: reader.result as string }
+        }));
+      } else if (type === 'mentorLogo' && index !== undefined) {
+        setImagePreviews(prev => ({
+          ...prev,
+          mentorLogos: { ...prev.mentorLogos, [index]: reader.result as string }
+        }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,50 +87,19 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
       const formData = new FormData(e.currentTarget);
       
       // Add course ID if updating
-      if (course?.id) {
-        formData.append('id', course.id.toString());
+      if (course?._id) {
+        formData.append('id', course._id.toString());
       }
 
-      // Add array data to formData
-      const courseData = {
-        title: formData.get('title'),
-        rating: Number(formData.get('rating')),
-        reviews: Number(formData.get('reviews')),
-        duration: formData.get('duration'),
-        level: formData.get('level'),
-        price: Number(formData.get('price')),
-        discountedPrice: Number(formData.get('discountedPrice')),
-        nextBatch: formData.get('nextBatch'),
-        category: formData.get('category'),
-        description: formData.get('description'),
-        features,
-        learningOutcomes,
-        careerOpportunities,
-        targetAudience,
-        mentors,
-        programFees
-      };
-
-      formData.append('title', courseData.title as string);
-formData.append('category', courseData.category as string);
-formData.append('rating', String(courseData.rating));
-formData.append('reviews', String(courseData.reviews));
-formData.append('duration', courseData.duration as string);
-formData.append('level', courseData.level as string);
-formData.append('price', String(courseData.price));
-formData.append('discountedPrice', String(courseData.discountedPrice));
-formData.append('nextBatch', courseData.nextBatch as string);
-formData.append('description', courseData.description as string);
-
-formData.append('features', JSON.stringify(courseData.features));
-formData.append('learningOutcomes', JSON.stringify(courseData.learningOutcomes));
-formData.append('careerOpportunities', JSON.stringify(courseData.careerOpportunities));
-formData.append('targetAudience', JSON.stringify(courseData.targetAudience));
-formData.append('mentors', JSON.stringify(courseData.mentors));
-formData.append('programFees', JSON.stringify(courseData.programFees));
+      // Add all data to formData
+      formData.append('features', JSON.stringify(features));
+      formData.append('learningOutcomes', JSON.stringify(learningOutcomes));
+      formData.append('careerOpportunities', JSON.stringify(careerOpportunities));
+      formData.append('targetAudience', JSON.stringify(targetAudience));
+      formData.append('mentors', JSON.stringify(mentors));
+      formData.append('programFees', JSON.stringify(programFees));
 
       await onSubmit(formData);
-      
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to submit course';
       toast({
@@ -108,6 +110,48 @@ formData.append('programFees', JSON.stringify(courseData.programFees));
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const renderFileInput = (label: string, type: 'courseImage' | 'mentorImage' | 'mentorLogo', index?: number) => {
+    const previewImage = type === 'courseImage' 
+      ? imagePreviews.courseImage 
+      : type === 'mentorImage' && index !== undefined
+        ? imagePreviews.mentorImages[index]
+        : type === 'mentorLogo' && index !== undefined
+          ? imagePreviews.mentorLogos[index]
+          : undefined;
+
+    const inputName = type === 'courseImage' 
+      ? 'image' 
+      : type === 'mentorImage'
+        ? `mentor_image_${index}`
+        : `mentor_logo_${index}`;
+
+    return (
+      <div className="space-y-2">
+        {previewImage && (
+          <div className="relative w-full aspect-video mb-4 rounded-lg overflow-hidden">
+            <Image
+              src={previewImage}
+              alt={label}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
+        <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:bg-muted/50 transition-colors cursor-pointer">
+          <Input
+            type="file"
+            name={inputName}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            accept="image/*"
+            onChange={(e) => handleImageChange(e.target.files?.[0] || null, type, index)}
+          />
+          <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
+          <span className="mt-2 block text-sm font-medium">{label}</span>
+        </div>
+      </div>
+    );
   };
 
   const handleArrayInput = (
@@ -187,30 +231,6 @@ formData.append('programFees', JSON.stringify(courseData.programFees));
     setProgramFees(newProgramFees);
   };
 
-  const renderFileInput = (label: string, currentImage?: string) => (
-    <div className="space-y-2">
-      {currentImage && (
-        <div className="relative w-full aspect-video mb-4 rounded-lg overflow-hidden">
-          <Image
-            src={currentImage}
-            alt={label}
-            fill
-            className="object-cover"
-          />
-        </div>
-      )}
-      <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:bg-muted/50 transition-colors cursor-pointer">
-        <Input
-          type="file"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          accept="image/*"
-        />
-        <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
-        <span className="mt-2 block text-sm font-medium">{label}</span>
-      </div>
-    </div>
-  );
-
   return (
     <ScrollArea className="h-[80vh] pr-4">
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -228,7 +248,7 @@ formData.append('programFees', JSON.stringify(courseData.programFees));
 
             <div>
               <Label>Course Image {!course && '*'}</Label>
-              {renderFileInput('Upload Image', course?.image)}
+              {renderFileInput('Upload Image', 'courseImage')}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -512,12 +532,12 @@ formData.append('programFees', JSON.stringify(courseData.programFees));
 
                   <div>
                     <Label>Profile Image</Label>
-                    {renderFileInput('Upload Image', mentor.image)}
+                    {renderFileInput('Upload Image', 'mentorImage', index)}
                   </div>
 
                   <div>
                     <Label>Company Logo</Label>
-                    {renderFileInput('Upload Logo', mentor.companyLogo)}
+                    {renderFileInput('Upload Logo', 'mentorLogo', index)}
                   </div>
                 </div>
               </div>
