@@ -4,6 +4,7 @@ import connectToDatabase from '@/lib/mongodb';
 import CourseModel from '@/lib/models/course';
 import mongoose from 'mongoose';
 
+
 export async function GET() {
   try {
     // Ensure database connection is successful
@@ -13,20 +14,23 @@ export async function GET() {
 
     // Fetch courses sorted by 'id'
     const courses = await CourseModel.find().sort({ id: 1 });
-    
+
     // Check if courses were returned
     if (!courses.length) {
       console.log('No courses found');
     }
 
     return NextResponse.json(courses);
-  } catch (error) {
+  } catch (error: unknown) {
+    // Check if the error is an instance of Error
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    
     // Detailed error logging
-    console.error('Failed to fetch courses:', error);
+    console.error('Failed to fetch courses:', errorMessage);
     
     // Return specific error response
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch courses', error: error.message },
+      { success: false, message: 'Failed to fetch courses', error: errorMessage },
       { status: 500 }
     );
   }
