@@ -35,10 +35,6 @@ export default function CourseList({ courses, onDelete }: CourseListProps) {
     );
   }
 
-  const handleEditClick = (courseId: string) => {
-    router.push(`/admin/dashboard/courses/${courseId}`);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -114,7 +110,7 @@ export default function CourseList({ courses, onDelete }: CourseListProps) {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => handleEditClick(course._id)}
+                  onClick={() => router.push(`/admin/dashboard/courses/${course._id}`)}
                 >
                   <PencilIcon className="h-4 w-4 mr-2" />
                   Edit
