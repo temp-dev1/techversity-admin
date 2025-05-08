@@ -11,7 +11,7 @@ import { LogOutIcon, ArrowLeftIcon, Loader2, PlusIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);  // Ensure courses is initialized as an empty array
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -49,7 +49,7 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (Array.isArray(data)) {
-        setCourses(data); // Assumes each course already has `id: number`
+        setCourses(data); // Assuming `id` is a number in each course
       } else if (data.success === false) {
         throw new Error(data.message || 'Failed to fetch courses');
       }
@@ -76,7 +76,7 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (data.success) {
-        setCourses([...courses, data.course]); // course must include `id: number`
+        setCourses((prevCourses) => [...prevCourses, data.course]);  // Ensure data.course includes `id: number`
         toast({
           title: "Success",
           description: "Course created successfully",
@@ -108,7 +108,9 @@ export default function CoursesPage() {
 
       if (data.success) {
         const updatedCourse = data.course;
-        setCourses(courses.map(c => (c.id === id ? updatedCourse : c)));
+        setCourses((prevCourses) =>
+          prevCourses.map((c) => (c.id === id ? updatedCourse : c))
+        );
         toast({
           title: "Success",
           description: "Course updated successfully",
@@ -136,7 +138,7 @@ export default function CoursesPage() {
       });
 
       if (response.ok) {
-        setCourses(courses.filter(course => course.id !== id));
+        setCourses((prevCourses) => prevCourses.filter((course) => course.id !== id));
         toast({
           title: "Successfully deleted",
           description: "The course has been removed",
