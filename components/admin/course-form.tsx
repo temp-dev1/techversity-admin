@@ -16,14 +16,34 @@ interface CourseFormProps {
   onSubmit: (data: FormData) => void;
 }
 
+interface ProgramFeature {
+  name: string;
+  included: boolean;
+}
+
+interface ProgramFee {
+  type: string;
+  price: number;
+  features: ProgramFeature[];
+}
+
+interface Mentor {
+  name: string;
+  image?: string;
+  role: string;
+  company: string;
+  companyLogo?: string;
+  description: string;
+}
+
 export default function CourseForm({ course, onSubmit }: CourseFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [features, setFeatures] = useState<string[]>(course?.features || []);
   const [learningOutcomes, setLearningOutcomes] = useState<string[]>(course?.learningOutcomes || []);
   const [careerOpportunities, setCareerOpportunities] = useState<string[]>(course?.careerOpportunities || []);
   const [targetAudience, setTargetAudience] = useState<string[]>(course?.targetAudience || []);
-  const [mentors, setMentors] = useState(course?.mentors || [{ name: '', role: '', company: '', description: '' }]);
-  const [programFees, setProgramFees] = useState(course?.programFees || [{ type: '', price: 0, features: [{ name: '', included: true }] }]);
+  const [mentors, setMentors] = useState<Mentor[]>(course?.mentors || [{ name: '', role: '', company: '', description: '' }]);
+  const [programFees, setProgramFees] = useState<ProgramFee[]>(course?.programFees || [{ type: '', price: 0, features: [{ name: '', included: true }] }]);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -93,14 +113,14 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
   };
 
   const addMentor = () => {
-    setMentors([...mentors, { name: '', image: '', role: '', company: '', companyLogo: '', description: '' }]);
+    setMentors([...mentors, { name: '', role: '', company: '', description: '' }]);
   };
 
   const removeMentor = (index: number) => {
     setMentors(mentors.filter((_, i) => i !== index));
   };
 
-  const updateMentor = (index: number, field: string, value: string) => {
+  const updateMentor = (index: number, field: keyof Mentor, value: string) => {
     const newMentors = [...mentors];
     newMentors[index] = { ...newMentors[index], [field]: value };
     setMentors(newMentors);
@@ -114,7 +134,7 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
     setProgramFees(programFees.filter((_, i) => i !== index));
   };
 
-  const updateProgramFee = (index: number, field: string, value: any) => {
+  const updateProgramFee = (index: number, field: keyof ProgramFee, value: string | number) => {
     const newProgramFees = [...programFees];
     newProgramFees[index] = { ...newProgramFees[index], [field]: value };
     setProgramFees(newProgramFees);
@@ -132,18 +152,23 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
     setProgramFees(newProgramFees);
   };
 
- type FeatureField = 'name' | 'included';
-
-const updateProgramFeature = (
-  programIndex: number,
-  featureIndex: number,
-  field: FeatureField,
-  value: string | boolean
-) => {
-  const newProgramFees = [...programFees];
-  newProgramFees[programIndex].features[featureIndex][field] = value;
-  setProgramFees(newProgramFees);
-};
+  const updateProgramFeature = (
+    programIndex: number,
+    featureIndex: number,
+    field: keyof ProgramFeature,
+    value: string | boolean
+  ) => {
+    const newProgramFees = [...programFees];
+    const feature = newProgramFees[programIndex].features[featureIndex];
+    
+    if (field === 'name' && typeof value === 'string') {
+      feature.name = value;
+    } else if (field === 'included' && typeof value === 'boolean') {
+      feature.included = value;
+    }
+    
+    setProgramFees(newProgramFees);
+  };
 
   const renderFileInput = (label: string, currentImage?: string) => (
     <div className="space-y-2">
