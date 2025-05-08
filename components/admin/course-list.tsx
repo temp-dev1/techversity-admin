@@ -16,8 +16,8 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 interface CourseListProps {
   courses: Course[];
-  onDelete: (id: string) => void;
-  onUpdate: (id: string, data: FormData) => void;
+  onDelete: (id: number) => void;
+  onUpdate: (id: number, data: FormData) => void;
 }
 
 export default function CourseList({ courses, onDelete, onUpdate }: CourseListProps) {
