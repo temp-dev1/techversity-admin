@@ -21,7 +21,7 @@ const MentorSchema = new mongoose.Schema({
 }, { _id: false });
 
 const CourseSchema = new mongoose.Schema({
-  id: Number,
+  id: { type: Number, required: true, unique: true },
   title: String,
   image: String,
   rating: Number,
