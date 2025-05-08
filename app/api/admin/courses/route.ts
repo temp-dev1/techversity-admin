@@ -142,7 +142,6 @@ export async function PUT(req: NextRequest) {
       { id }, // id is now a number
       updateData,
       { new: true }
-    );ew: true }
     );
 
     if (!updatedCourse) {
