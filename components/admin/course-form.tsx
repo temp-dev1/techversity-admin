@@ -55,7 +55,7 @@ export default function CourseForm({ course, onSubmit }: CourseFormProps) {
       
       // Add course ID if updating
       if (course?.id) {
-        formData.append('id', course.id);
+        formData.append('id', course.id.toString());
       }
 
       // Add array data to formData
