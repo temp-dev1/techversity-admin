@@ -45,8 +45,9 @@ export async function DELETE(req: NextRequest) {
         result = await CertPartnerModel.findByIdAndDelete(id);
         break;
       case 'course':
-        result = await CourseModel.findByIdAndDelete(id);
+        result = await CourseModel.findOneAndDelete({ id });
         break;
+
       default:
         return NextResponse.json(
           { success: false, message: 'Invalid type specified' },
