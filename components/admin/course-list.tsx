@@ -117,7 +117,7 @@ export default function CourseList({ courses, onDelete, onUpdate }: CourseListPr
                   <DialogContent className="max-w-4xl">
                     <CourseForm
                       course={course}
-                      onSubmit={(data) => onUpdate(course.id.toString(), data)}
+                      onSubmit={(data) => onUpdate(course.id, data)}
                     />
                   </DialogContent>
                 </Dialog>
@@ -139,7 +139,7 @@ export default function CourseList({ courses, onDelete, onUpdate }: CourseListPr
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => onDelete(course.id.toString())}>
+                      <AlertDialogAction onClick={() => onDelete(course.id)}>
                         Delete
                       </AlertDialogAction>
                     </AlertDialogFooter>
