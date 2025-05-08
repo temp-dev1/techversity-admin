@@ -6,17 +6,32 @@ import mongoose from 'mongoose';
 
 export async function GET() {
   try {
+    // Ensure database connection is successful
+    console.log('Connecting to database...');
     await connectToDatabase();
+    console.log('Database connected.');
+
+    // Fetch courses sorted by 'id'
     const courses = await CourseModel.find().sort({ id: 1 });
+    
+    // Check if courses were returned
+    if (!courses.length) {
+      console.log('No courses found');
+    }
+
     return NextResponse.json(courses);
   } catch (error) {
+    // Detailed error logging
     console.error('Failed to fetch courses:', error);
+    
+    // Return specific error response
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch courses' },
+      { success: false, message: 'Failed to fetch courses', error: error.message },
       { status: 500 }
     );
   }
 }
+
 
 export async function POST(req: NextRequest) {
   try {
