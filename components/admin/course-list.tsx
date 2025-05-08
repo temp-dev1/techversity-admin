@@ -23,6 +23,7 @@ interface CourseListProps {
 export default function CourseList({ courses, onDelete, onUpdate }: CourseListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Filter courses based on search term
   const filteredCourses = courses.filter(course => 
     course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.category.toLowerCase().includes(searchTerm.toLowerCase())
