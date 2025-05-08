@@ -110,7 +110,7 @@ export default function CourseList({ courses, onDelete }: CourseListProps) {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => router.push(`/admin/dashboard/courses/${course._id.toString()}`)}
+                  onClick={() => router.push(`/admin/dashboard/courses/${course.id}`)}
                 >
                   <PencilIcon className="h-4 w-4 mr-2" />
                   Edit
