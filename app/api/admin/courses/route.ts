@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const id = formData.get('id') as string;
+    const id = Number(formData.get('id'));
     const image = formData.get('image') as File;
     const data = JSON.parse(formData.get('data') as string);
 
@@ -138,10 +138,11 @@ export async function PUT(req: NextRequest) {
     }
 
     // Find and update the course using MongoDB's _id
-    const updatedCourse = await CourseModel.findByIdAndUpdate(
-      id,
+    const updatedCourse = await CourseModel.findOneAndUpdate(
+      { id }, // id is now a number
       updateData,
       { new: true }
+    );ew: true }
     );
 
     if (!updatedCourse) {
