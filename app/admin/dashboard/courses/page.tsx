@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Course } from '@/lib/types';
+import { Course } from '@/lib/models/course';
 import CourseList from '@/components/admin/course-list';
 import CourseForm from '@/components/admin/course-form';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ export default function CoursesPage() {
       router.push('/admin');
       return;
     }
-    
+
     try {
       const sessionData = JSON.parse(session);
       const timeNow = Date.now();
@@ -45,12 +45,15 @@ export default function CoursesPage() {
     try {
       setError(null);
       const response = await fetch('/api/admin/courses');
-      if (!response.ok) {
-        throw new Error('Failed to fetch courses');
-      }
+      if (!response.ok) throw new Error('Failed to fetch courses');
       const data = await response.json();
+
       if (Array.isArray(data)) {
-        setCourses(data);
+        const transformed = data.map(course => ({
+          ...course,
+          id: course._id,
+        }));
+        setCourses(transformed);
       } else if (data.success === false) {
         throw new Error(data.message || 'Failed to fetch courses');
       }
@@ -77,7 +80,11 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (data.success) {
-        setCourses([...courses, data.course]);
+        const newCourse = {
+          ...data.course,
+          id: data.course._id,
+        };
+        setCourses([...courses, newCourse]);
         toast({
           title: "Success",
           description: "Course created successfully",
@@ -96,6 +103,40 @@ export default function CoursesPage() {
     }
   };
 
+  const handleUpdate = async (id: string, formData: FormData) => {
+    try {
+      formData.append('id', id);
+      const response = await fetch('/api/admin/courses', {
+        method: 'PUT',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const updatedCourse = {
+          ...data.course,
+          id: data.course._id,
+        };
+        setCourses(courses.map(c => (c.id === id ? updatedCourse : c)));
+        toast({
+          title: "Success",
+          description: "Course updated successfully",
+          variant: "default",
+        });
+      } else {
+        throw new Error(data.message || 'Failed to update course');
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to update course';
+      toast({
+        title: "Error",
+        description: message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleDelete = async (id: string) => {
     try {
       const response = await fetch(`/api/admin/delete`, {
@@ -105,7 +146,7 @@ export default function CoursesPage() {
       });
 
       if (response.ok) {
-        setCourses(courses.filter(course => course._id !== id));
+        setCourses(courses.filter(course => course.id !== id));
         toast({
           title: "Successfully deleted",
           description: "The course has been removed",
@@ -171,18 +212,15 @@ export default function CoursesPage() {
         ) : error ? (
           <div className="text-center py-12">
             <p className="text-lg text-destructive">{error}</p>
-            <Button 
-              variant="outline" 
-              onClick={fetchCourses} 
-              className="mt-4"
-            >
+            <Button variant="outline" onClick={fetchCourses} className="mt-4">
               Try Again
             </Button>
           </div>
         ) : (
-          <CourseList 
-            courses={courses} 
+          <CourseList
+            courses={courses}
             onDelete={handleDelete}
+            onUpdate={handleUpdate}
           />
         )}
       </main>
